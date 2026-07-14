@@ -1,0 +1,30 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "HerobrineAI Behavior Pack",
+    "description": "El cerebro de Herobrine",
+    "uuid": "593b48f9-4673-4ea2-9444-24574971c223",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 20, 0]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "269f83f0-4fc7-4566-aefb-b87c10b78e58",
+      "version": [1, 0, 0]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      "entry": "scripts/main.js",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.10.0"
+    }
+  ]
+}
