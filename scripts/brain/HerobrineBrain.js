@@ -1,22 +1,21 @@
 import { MemoryManager } from "./MemoryManager.js";
 import { Personality } from "./Personality.js";
 import { DecisionEngine } from "./DecisionEngine.js";
-import { IdleState } from "../states/IdleState.js";
+import * as States from "../states/index.js";
 
 export class HerobrineBrain {
     constructor(systems) {
         this.systems = systems;
         
         this.memoryManager = new MemoryManager();
-        this.memoryManager.loadMemories(); // Cargar memoria persistente
+        this.memoryManager.loadMemories();
 
         this.personality = new Personality();
         this.decisionEngine = new DecisionEngine(systems.worldSystem, systems.playerTracker);
         
         this.targetPlayer = null;
-        this.currentState = new IdleState(this);
+        this.currentState = new States.IdleState(this);
         
-        // Conectar el cerebro al EventSystem
         this.systems.eventSystem.setBrain(this);
     }
 
@@ -35,7 +34,6 @@ export class HerobrineBrain {
         this.currentState = newState;
         this.currentState.enter();
         
-        // Guardar estado actual en memoria
         if (this.targetPlayer) {
             const mem = this.getMemory(this.targetPlayer);
             mem.behavior.lastState = newState.constructor.name;
