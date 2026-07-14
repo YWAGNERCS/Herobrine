@@ -2,7 +2,7 @@ export class WorldManipulation {
     static storedBlocks = []; // Memoria temporal de bloques (Sección A)
 
     static removeTorch(player) {
-        console.warn([ScareAction] Antorcha eliminada cerca de +player.name);
+        console.warn("[ScareAction] Antorcha eliminada cerca de " + player.name);
     }
 
     static restoreBlocks() {

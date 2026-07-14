@@ -2,7 +2,7 @@ export class Conditions {
     static getInventoryInterest(player) {
         let extraInterest = 0;
         try {
-            const inventory = player.getComponent("inventory").container;
+            const inventory = player.getComponent("minecraft:inventory").container;
             for (let i = 0; i < inventory.size; i++) {
                 const item = inventory.getItem(i);
                 if (!item) continue;
@@ -21,7 +21,7 @@ export class Conditions {
 
     static isPlayerInjured(player) {
         try {
-            const health = player.getComponent("health");
+            const health = player.getComponent("minecraft:health");
             return health.currentValue < health.defaultValue * 0.5; // Menos del 50% de vida
         } catch (e) { return false; }
     }

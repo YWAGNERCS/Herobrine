@@ -8,14 +8,14 @@ export class SpawnSystem {
     spawnTestEntity(player, location) {
         this.despawn(); // Solo uno activo
         try {
-            const entity = player.dimension.spawnEntity("minecraft:zombie", location);
+            const entity = player.dimension.spawnEntity("minecraft:ender_dragon", location);
             entity.nameTag = "Herobrine";
             entity.addTag("herobrine_test");
             // Efectos visuales de protección para prueba
             entity.runCommand("effect @s resistance 999999 255 true");
             entity.runCommand("effect @s slowness 999999 10 true");
             this.activeEntity = entity;
-            console.warn([SpawnSystem] Entidad invocada en +location.x+, +location.y+, +location.z);
+            console.warn("[SpawnSystem] Entidad invocada en " + location.x + ", " + location.y + ", " + location.z);
             return entity;
         } catch (e) {
             console.error("[SpawnSystem] Error invocando:", e);
