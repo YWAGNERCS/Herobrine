@@ -1,0 +1,30 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.herobrine.general": {
+      "initial_state": "idle",
+      "states": {
+        "idle": {
+          "animations": [ "idle" ],
+          "transitions": [
+            { "walk": "query.modified_move_speed > 0.1" },
+            { "attack": "query.is_delayed_attacking" }
+          ]
+        },
+        "walk": {
+          "animations": [ "walk" ],
+          "transitions": [
+            { "idle": "query.modified_move_speed <= 0.1" },
+            { "attack": "query.is_delayed_attacking" }
+          ]
+        },
+        "attack": {
+          "animations": [ "attack" ],
+          "transitions": [
+            { "idle": "!query.is_delayed_attacking" }
+          ]
+        }
+      }
+    }
+  }
+}

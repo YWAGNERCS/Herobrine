@@ -1,0 +1,17 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "HerobrineAI Resource Pack",
+    "description": "Texturas, modelos y animaciones de Herobrine",
+    "uuid": "1402e5a5-8a08-4525-af50-183dcb8c24f6",
+    "version": [1, 0, 9],
+    "min_engine_version": [1, 20, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "53905696-e8af-4458-a955-9e52122f42ab",
+      "version": [1, 0, 0]
+    }
+  ]
+}

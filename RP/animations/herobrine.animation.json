@@ -1,0 +1,48 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.herobrine.idle": {
+      "loop": true,
+      "bones": {
+        "rightArm": {
+          "rotation": [ "math.sin(query.life_time * 76.4) * 2.86", 0, 0 ]
+        },
+        "leftArm": {
+          "rotation": [ "math.sin(query.life_time * 76.4 + 180) * 2.86", 0, 0 ]
+        }
+      }
+    },
+    "animation.herobrine.walk": {
+      "loop": true,
+      "anim_time_update": "query.modified_distance_moved",
+      "bones": {
+        "rightLeg": {
+          "rotation": [ "math.cos(query.anim_time * 38.17) * 40.0", 0, 0 ]
+        },
+        "leftLeg": {
+          "rotation": [ "math.cos(query.anim_time * 38.17 + 180) * 40.0", 0, 0 ]
+        },
+        "rightArm": {
+          "rotation": [ "math.cos(query.anim_time * 38.17 + 180) * 40.0", 0, 0 ]
+        },
+        "leftArm": {
+          "rotation": [ "math.cos(query.anim_time * 38.17) * 40.0", 0, 0 ]
+        }
+      }
+    },
+    "animation.herobrine.attack": {
+      "loop": false,
+      "animation_length": 0.5,
+      "bones": {
+        "rightArm": {
+          "rotation": {
+            "0.0": [ 0, 0, 0 ],
+            "0.2": [ -80, 0, 0 ],
+            "0.4": [ 20, 0, 0 ],
+            "0.5": [ 0, 0, 0 ]
+          }
+        }
+      }
+    }
+  }
+}

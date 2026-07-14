@@ -1,0 +1,3 @@
+Coloca aquí el archivo de modelo exportado de Blockbench.
+Debería llamarse: herobrine.geo.json
+Asegúrate de que el identificador interno en Blockbench sea: geometry.herobrine
