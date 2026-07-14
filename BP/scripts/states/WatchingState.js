@@ -9,9 +9,16 @@ export class WatchingState {
             WatchAction.execute(this.brain, this.brain.targetPlayer);
         }
         this.ticks = 0;
+        this.brain.setVisualState("quiet_stare");
     }
     execute() {
         this.ticks++;
+        // Aleatoriamente inclinar la cabeza si te está observando mucho tiempo
+        if (this.ticks % 100 === 0 && Math.random() < 0.3) {
+            this.brain.setVisualState("tilt_head");
+        } else if (this.ticks % 140 === 0) {
+            this.brain.setVisualState("quiet_stare"); // volver a la normalidad
+        }
     }
     exit() {}
 }

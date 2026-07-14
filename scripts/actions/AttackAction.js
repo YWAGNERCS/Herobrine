@@ -43,6 +43,7 @@ export class AttackAction {
 
             // Activar estado de ataque en el BP (provoca que corra hacia el jugador)
             entity.triggerEvent("antigravity:start_attack");
+            brain.setVisualState("run");
             
             try {
                 // Efectos de trueno (sin destruir terreno)

@@ -5,7 +5,14 @@
       "identifier": "antigravity:herobrine",
       "is_spawnable": true,
       "is_summonable": true,
-      "is_experimental": false
+      "is_experimental": false,
+      "properties": {
+        "antigravity:state": {
+          "type": "int",
+          "default": 0,
+          "client_sync": true
+        }
+      }
     },
     "component_groups": {
       "antigravity:stalking": {

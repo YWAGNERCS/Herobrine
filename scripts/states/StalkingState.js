@@ -7,6 +7,7 @@ export class StalkingState {
         if (this.brain.targetPlayer) {
             StalkAction.execute(this.brain, this.brain.targetPlayer);
         }
+        this.brain.setVisualState("slow_walk");
     }
     execute() {}
     exit() {}

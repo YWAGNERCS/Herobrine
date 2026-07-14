@@ -14,14 +14,21 @@
       },
       "scripts": {
         "animate": [
-          "controllers"
+          "general_controller",
+          "head_controller"
         ]
       },
       "animations": {
         "idle": "animation.herobrine.idle",
         "walk": "animation.herobrine.walk",
+        "quiet_stare": "animation.herobrine.quiet_stare",
+        "tilt_head": "animation.herobrine.tilt_head",
+        "slow_walk": "animation.herobrine.slow_walk",
+        "teleport_fade": "animation.herobrine.teleport_fade",
         "attack": "animation.herobrine.attack",
-        "controllers": "controller.animation.herobrine.general"
+        "look_at_target": "animation.herobrine.look_at_target",
+        "general_controller": "controller.animation.herobrine.general",
+        "head_controller": "controller.animation.herobrine.head"
       },
       "render_controllers": [
         "controller.render.herobrine"

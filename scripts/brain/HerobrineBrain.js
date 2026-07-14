@@ -41,6 +41,27 @@ export class HerobrineBrain {
         }
     }
 
+    setVisualState(stateName) {
+        const entity = this.systems.spawnSystem.activeEntity;
+        if (!entity || !entity.isValid()) return;
+
+        const stateMap = {
+            "default": 0,
+            "quiet_stare": 1,
+            "tilt_head": 2,
+            "slow_walk": 3,
+            "run": 4,
+            "teleport_fade": 5
+        };
+
+        const stateInt = stateMap[stateName] !== undefined ? stateMap[stateName] : 0;
+        try {
+            entity.setProperty("antigravity:state", stateInt);
+        } catch (e) {
+            console.warn("[HerobrineAI] Error setting visual state: " + e);
+        }
+    }
+
     forceEscape() {
         if (this.targetPlayer) {
             const mem = this.getMemory(this.targetPlayer);

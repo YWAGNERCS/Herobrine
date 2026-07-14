@@ -2,27 +2,71 @@
   "format_version": "1.10.0",
   "animation_controllers": {
     "controller.animation.herobrine.general": {
-      "initial_state": "idle",
+      "initial_state": "default",
       "states": {
+        "default": {
+          "transitions": [
+            { "quiet_stare": "query.property('antigravity:state') == 1" },
+            { "tilt_head": "query.property('antigravity:state') == 2" },
+            { "slow_walk": "query.property('antigravity:state') == 3" },
+            { "run": "query.property('antigravity:state') == 4" },
+            { "teleport_fade": "query.property('antigravity:state') == 5" },
+            { "walk": "query.modified_move_speed > 0.1 && query.property('antigravity:state') == 0" },
+            { "idle": "query.modified_move_speed <= 0.1 && query.property('antigravity:state') == 0" }
+          ]
+        },
         "idle": {
           "animations": [ "idle" ],
           "transitions": [
-            { "walk": "query.modified_move_speed > 0.1" },
-            { "attack": "query.is_delayed_attacking" }
+            { "default": "query.property('antigravity:state') != 0 || query.modified_move_speed > 0.1" }
           ]
         },
         "walk": {
           "animations": [ "walk" ],
           "transitions": [
-            { "idle": "query.modified_move_speed <= 0.1" },
-            { "attack": "query.is_delayed_attacking" }
+            { "default": "query.property('antigravity:state') != 0 || query.modified_move_speed <= 0.1" }
           ]
         },
-        "attack": {
-          "animations": [ "attack" ],
+        "quiet_stare": {
+          "animations": [ "quiet_stare" ],
           "transitions": [
-            { "idle": "!query.is_delayed_attacking" }
+            { "default": "query.property('antigravity:state') != 1" }
           ]
+        },
+        "tilt_head": {
+          "animations": [ "tilt_head" ],
+          "transitions": [
+            { "default": "query.property('antigravity:state') != 2" }
+          ]
+        },
+        "slow_walk": {
+          "animations": [ "slow_walk" ],
+          "transitions": [
+            { "default": "query.property('antigravity:state') != 3" }
+          ]
+        },
+        "run": {
+          "animations": [ "walk" ],
+          "transitions": [
+            { "default": "query.property('antigravity:state') != 4" }
+          ]
+        },
+        "teleport_fade": {
+          "animations": [ "teleport_fade" ],
+          "transitions": [
+            { "default": "query.property('antigravity:state') != 5" }
+          ],
+          "on_entry": [
+            "@s antigravity:spawn_particle"
+          ]
+        }
+      }
+    },
+    "controller.animation.herobrine.head": {
+      "initial_state": "look",
+      "states": {
+        "look": {
+          "animations": [ "look_at_target" ]
         }
       }
     }
