@@ -1,35 +1,58 @@
-import { IdleState } from "../states/IdleState.js";
-import { WatchingState } from "../states/WatchingState.js";
+import { Priorities } from "./Priorities.js";
+import * as States from "../states/index.js";
 
 export class DecisionEngine {
     constructor(worldSystem, playerTracker) {
         this.worldSystem = worldSystem;
         this.playerTracker = playerTracker;
+        
+        this.currentGoal = null;
+        this.ticks = 0;
     }
 
     evaluate(memory, personality, brain) {
-        // Lógica de decisión dinámica basada en el estado del mundo y la memoria
-        
-        // Si el jugador acaba de llegar, dale tiempo.
-        // Simularemos un incremento de interés pasivo.
-        let interest = memory.fearLevel + (memory.timesSeen * 2);
-        
-        const isNight = this.worldSystem.isNight();
-        const isAlone = this.playerTracker.isPlayerAlone(brain.targetPlayer);
+        this.ticks++;
 
-        if (isNight && isAlone) {
-            interest += 20; // Sube mucho el interés si es de noche y está solo
-        }
+        if (this.currentGoal) {
+            const timeElapsed = this.ticks - this.currentGoal.startTime;
+            
+            // Condiciones de interrupción
+            // Ejemplo: El día interrumpe ataques o persecuciones
+            if (!this.worldSystem.isNight() && (this.currentGoal.stateName === 'HuntingState' || this.currentGoal.stateName === 'ChasingState')) {
+                this.currentGoal = null;
+                memory.behavior.daysWithoutAppearing = 0;
+                return new States.LeavingState(brain);
+            }
 
-        // Decisiones
-        if (brain.currentState.constructor.name === 'IdleState') {
-            if (interest > 50 && Math.random() < 0.1) {
-                // El motor decide cambiar a Watching
-                return new WatchingState(brain);
+            if (timeElapsed > this.currentGoal.maxDurationTicks) {
+                this.currentGoal = null;
+                memory.behavior.daysWithoutAppearing = 0; 
+                return new States.LeavingState(brain);
+            } else {
+                return null; 
             }
         }
+
+        // Decision loop (cada 5 seg)
+        if (this.ticks % 100 !== 0) return null;
+
+        const result = Priorities.calculate(memory, personality, this.worldSystem, this.playerTracker, brain.targetPlayer);
         
-        // Por defecto no cambiar estado
-        return null;
+        if (result.bestState !== 'IdleState') {
+            let maxDuration = 20 * 60 * 3;
+            if (result.bestState === 'WatchingState') maxDuration = 20 * 60 * 5;
+            if (result.bestState === 'ChasingState') maxDuration = 20 * 60 * 2;
+            if (result.bestState === 'HuntingState') maxDuration = 20 * 60 * 1;
+            
+            this.currentGoal = {
+                stateName: result.bestState,
+                startTime: this.ticks,
+                maxDurationTicks: maxDuration
+            };
+            
+            return new States[result.bestState](brain);
+        }
+
+        return new States.IdleState(brain);
     }
 }
