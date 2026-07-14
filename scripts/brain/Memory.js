@@ -1,15 +1,37 @@
 export class Memory {
-    constructor(playerName) {
-        this.playerName = playerName;
-        this.houseLocation = null;
-        this.visitedPlaces = [];
-        this.timesSeen = 0;
-        this.lastAttack = 0;
-        this.lastAppearance = 0;
-        this.favoriteBiome = null;
-        this.fearLevel = 0;
+    constructor(playerId, playerName) {
+        this.player = {
+            playerId: playerId,
+            playerName: playerName,
+            firstSeen: Date.now(),
+            lastSeen: Date.now(),
+            timesSeen: 0,
+            interestLevel: 0,
+            fearLevel: 0
+        };
         
-        // Seguimiento de tiempo de juego
-        this.joinDay = 0; // Día en el que entró por primera vez (se actualizará)
+        this.house = {
+            homeLocation: null,     // { x, y, z, dimension }
+            bedLocation: null,      // { x, y, z, dimension }
+            chestLocations: [],     // [{ x, y, z, dimension }]
+            favoriteRoom: null      // { x, y, z, dimension }
+        };
+        
+        this.world = {
+            visitedBiomes: [],
+            favoriteBiome: null,
+            favoriteCave: null,     // { x, y, z, dimension }
+            favoriteMountain: null, // { x, y, z, dimension }
+            spawnPoint: null        // { x, y, z, dimension }
+        };
+        
+        this.behavior = {
+            lastAppearance: 0,
+            lastAttack: 0,
+            lastState: 'IdleState',
+            daysWithoutAppearing: 0,
+            timesFollowed: 0,
+            timesEscaped: 0
+        };
     }
 }
