@@ -4,7 +4,7 @@
     "name": "HerobrineAI Behavior Pack",
     "description": "El cerebro de Herobrine",
     "uuid": "593b48f9-4673-4ea2-9444-24574971c223",
-    "version": [1, 0, 9],
+    "version": [1, 1, 0],
     "min_engine_version": [1, 20, 0]
   },
   "modules": [
