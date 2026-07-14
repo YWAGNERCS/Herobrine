@@ -62,13 +62,12 @@ export class HerobrineBrain {
         }
     }
 
-    forceEscape() {
+    forceEscape(attacker = null) {
         if (this.currentState.constructor.name === "LeavingState") return; // Ya está huyendo
         
-        if (this.targetPlayer) {
-            const mem = this.getMemory(this.targetPlayer);
-            mem.player.fearLevel += 20; // Huir da más miedo
-            this.saveMemories();
+        const playerToScare = attacker || this.targetPlayer;
+        if (playerToScare) {
+            this.systems.eventSystem.addFear(playerToScare, 20, "Atacó a Herobrine");
         }
         
         // Limpiar objetivo actual del motor de decisiones

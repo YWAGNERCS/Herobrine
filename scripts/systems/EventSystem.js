@@ -77,7 +77,11 @@ export class EventSystem {
             if (event.hurtEntity.typeId === "antigravity:herobrine") {
                 if (this.brain) {
                     console.warn("[HerobrineAI] ¡Herobrine recibió daño! Iniciando retirada táctica...");
-                    this.brain.forceEscape(); // Método que implementaremos en el cerebro
+                    let attacker = null;
+                    if (event.damageSource && event.damageSource.damagingEntity && event.damageSource.damagingEntity.typeId === "minecraft:player") {
+                        attacker = world.getAllPlayers().find(p => p.id === event.damageSource.damagingEntity.id);
+                    }
+                    this.brain.forceEscape(attacker);
                 }
             }
         });
