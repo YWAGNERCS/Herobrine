@@ -26,11 +26,11 @@ export class LeavingState {
     }
     execute() {
         this.ticks++;
-        if (this.ticks == 20) {
-            // Dar tiempo (1 segundo) a que la animación termine antes de despawnear
+        if (this.ticks == 2) {
+            // Despawn casi instantáneo
             EscapeAction.execute(this.brain, this.brain.targetPlayer);
         }
-        if (this.ticks > 25) {
+        if (this.ticks > 5) {
             this.brain.changeState(new IdleState(this.brain));
         }
     }
