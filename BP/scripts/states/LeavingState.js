@@ -7,6 +7,14 @@ export class LeavingState {
         console.warn("[HerobrineAI] -> LeavingState"); 
         this.brain.setVisualState("teleport_fade");
         
+        // Stop vanilla AI behaviors (attacking, moving)
+        const entity = this.brain.systems.spawnSystem.activeEntity;
+        if (entity && entity.isValid()) {
+            try {
+                entity.triggerEvent("antigravity:stop_action");
+            } catch(e) {}
+        }
+        
         // Efecto de cámara en JS ya que MoLang no puede hacer camerashake a un jugador
         if (this.brain.targetPlayer) {
             try {

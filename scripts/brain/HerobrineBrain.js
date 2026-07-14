@@ -63,6 +63,8 @@ export class HerobrineBrain {
     }
 
     forceEscape() {
+        if (this.currentState.constructor.name === "LeavingState") return; // Ya está huyendo
+        
         if (this.targetPlayer) {
             const mem = this.getMemory(this.targetPlayer);
             mem.player.fearLevel += 20; // Huir da más miedo
