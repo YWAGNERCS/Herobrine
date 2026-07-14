@@ -59,6 +59,11 @@ export class EventSystem {
             const blockId = event.brokenBlockPermutation.type.id;
             if (event.player && (blockId === "minecraft:diamond_ore" || blockId === "minecraft:deepslate_diamond_ore")) {
                 this.addInterest(event.player, 10, "Encontró diamantes");
+                if (this.brain) {
+                    const mem = this.brain.getMemory(event.player);
+                    mem.player.confidenceLevel = Math.min(100, mem.player.confidenceLevel + 20);
+                    this.brain.saveMemories();
+                }
             }
         });
 
@@ -72,8 +77,19 @@ export class EventSystem {
             }
         });
 
-        // Detectar si Herobrine recibe daño
+        // Jugador recibe daño de monstruos
         world.afterEvents.entityHurt.subscribe((event) => {
+            if (event.hurtEntity.typeId === "minecraft:player") {
+                if (this.brain) {
+                    const player = world.getAllPlayers().find(p => p.id === event.hurtEntity.id);
+                    if (player) {
+                        const mem = this.brain.getMemory(player);
+                        mem.player.stressLevel = Math.min(100, mem.player.stressLevel + 15);
+                        this.brain.saveMemories();
+                    }
+                }
+            }
+            
             if (event.hurtEntity.typeId === "antigravity:herobrine") {
                 if (this.brain) {
                     console.warn("[HerobrineAI] ¡Herobrine recibió daño! Iniciando retirada táctica...");

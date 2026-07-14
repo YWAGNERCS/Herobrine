@@ -7,7 +7,11 @@ export class Memory {
             lastSeen: Date.now(),
             timesSeen: 0,
             interestLevel: 0,
-            fearLevel: 0
+            fearLevel: 0,
+            safetyLevel: 50,
+            confidenceLevel: 50,
+            stressLevel: 0,
+            suspenseLevel: 0
         };
         
         this.house = {

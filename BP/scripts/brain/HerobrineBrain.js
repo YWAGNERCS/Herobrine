@@ -1,6 +1,7 @@
 import { MemoryManager } from "./MemoryManager.js";
 import { Personality } from "./Personality.js";
 import { DecisionEngine } from "./DecisionEngine.js";
+import { TerrorDirector } from "./TerrorDirector.js";
 import * as States from "../states/index.js";
 
 export class HerobrineBrain {
@@ -11,7 +12,8 @@ export class HerobrineBrain {
         this.memoryManager.loadMemories();
 
         this.personality = new Personality();
-        this.decisionEngine = new DecisionEngine(systems.worldSystem, systems.playerTracker);
+        this.terrorDirector = new TerrorDirector(systems.worldSystem);
+        this.decisionEngine = new DecisionEngine(systems.worldSystem, systems.playerTracker, this.terrorDirector);
         
         this.targetPlayer = null;
         this.currentState = new States.IdleState(this);
