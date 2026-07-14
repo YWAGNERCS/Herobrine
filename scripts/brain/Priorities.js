@@ -14,7 +14,8 @@ export class Priorities {
         
         // Tiempo sin aparecer
         const daysWithoutAppearing = memory.behavior.daysWithoutAppearing;
-        const cooldownFactor = daysWithoutAppearing > 0 ? 1 : 0.1;
+        // Si el interés sube de 10, ignoramos el cooldown para forzar acción rápida
+        const cooldownFactor = (daysWithoutAppearing > 0 || totalInterest > 10) ? 1 : 0.1;
 
         // Ruido aleatorio para imprevisibilidad (-5 a +5)
         const noise = () => (Math.random() * 10) - 5;

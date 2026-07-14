@@ -14,7 +14,7 @@ export class EventSystem {
         const mem = this.brain.getMemory(player);
         mem.player.interestLevel += amount;
         this.brain.saveMemories();
-        console.warn([HerobrineAI] Interés sobre +player.name+ cambió: +(amount > 0 ? '+' : '')+amount+ (+reason+). Total: +mem.player.interestLevel);
+        console.warn("[HerobrineAI] Interés sobre " + player.name + " cambió: " + (amount > 0 ? '+' : '') + amount + " (" + reason + "). Total: " + mem.player.interestLevel);
     }
     
     addFear(player, amount, reason) {
@@ -22,7 +22,7 @@ export class EventSystem {
         const mem = this.brain.getMemory(player);
         mem.player.fearLevel += amount;
         this.brain.saveMemories();
-        console.warn([HerobrineAI] Miedo de +player.name+ cambió: +(amount > 0 ? '+' : '')+amount+ (+reason+). Total: +mem.player.fearLevel);
+        console.warn("[HerobrineAI] Miedo de " + player.name + " cambió: " + (amount > 0 ? '+' : '') + amount + " (" + reason + "). Total: " + mem.player.fearLevel);
     }
 
     init() {
