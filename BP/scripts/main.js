@@ -46,4 +46,50 @@ system.runInterval(() => {
 
 import { AttackAction } from "./actions/AttackAction.js";
 
+world.beforeEvents.chatSend.subscribe((event) => {
+    const msg = event.message;
+    if (msg.startsWith("!hb")) {
+        event.cancel = true; // Ocultar del chat público
+        const parts = msg.split(" ");
+        if (parts[1] === "set" && parts[2] && parts[3]) {
+            const stat = parts[2];
+            const val = parseInt(parts[3]);
+            
+            if (globalBrain) {
+                // Obtener memoria del jugador que envió el mensaje
+                const mem = globalBrain.getMemory(event.sender);
+                if (mem.player[stat] !== undefined) {
+                    mem.player[stat] = val;
+                    globalBrain.saveMemories();
+                    
+                    // Si cambiamos suspense a 0, forzamos al director a volver a fase CALM
+                    if (stat === "suspenseLevel" && val < 30) {
+                        globalBrain.terrorDirector.pacingPhase = "CALM";
+                    }
+                    
+                    event.sender.sendMessage(`§a[Debug AI] ${stat} actualizado a ${val}`);
+                } else {
+                    event.sender.sendMessage(`§c[Debug AI] Estadística '${stat}' no existe. Usa: suspenseLevel, fearLevel, safetyLevel, stressLevel, confidenceLevel`);
+                }
+            } else {
+                event.sender.sendMessage("§c[Debug AI] Cerebro no inicializado aún.");
+            }
+        } else if (parts[1] === "info") {
+            if (globalBrain) {
+                const mem = globalBrain.getMemory(event.sender);
+                const stats = mem.player;
+                event.sender.sendMessage(`§b--- Herobrine AI Stats ---`);
+                event.sender.sendMessage(`§7Suspense: §f${stats.suspenseLevel}`);
+                event.sender.sendMessage(`§7Safety: §f${stats.safetyLevel}`);
+                event.sender.sendMessage(`§7Confidence: §f${stats.confidenceLevel}`);
+                event.sender.sendMessage(`§7Fear: §f${stats.fearLevel}`);
+                event.sender.sendMessage(`§7Stress: §f${stats.stressLevel}`);
+                event.sender.sendMessage(`§7Fase Director: §e${globalBrain.terrorDirector.pacingPhase}`);
+            }
+        } else {
+            event.sender.sendMessage("§e[Debug AI] Comandos: '!hb info' o '!hb set <estat> <valor>'");
+        }
+    }
+});
+
 // Código de debug con el palo removido. El mod ahora es 100% autónomo.
