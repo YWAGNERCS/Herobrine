@@ -54,6 +54,13 @@ export class EventSystem {
             }
         });
 
+        // Construcción y destrucción
+        world.afterEvents.playerPlaceBlock.subscribe((event) => {
+            if (this.brain && this.brain.realityManager) {
+                this.brain.realityManager.trackBuild(event.player);
+            }
+        });
+
         // Encontrar diamantes (romper mineral de diamante)
         world.afterEvents.playerBreakBlock.subscribe((event) => {
             const blockId = event.brokenBlockPermutation.type.id;

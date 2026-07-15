@@ -1,8 +1,35 @@
-export class WorldManipulation {
-    static storedBlocks = []; 
+import { WitnessSystem } from "./WitnessSystem.js";
+import { EvidenceSystem } from "./EvidenceSystem.js";
 
-    static removeTorch(player) {
-        // Encontrar una antorcha cerca y quitarla
+export class WorldManipulation {
+    static stripLeaves(player, realityManager) {
+        if (!realityManager.isRealitySafe(player)) return;
+        
+        // Solo de noche y muy lejos de casa. Asumiremos que el GoalPlanner filtró esto, pero WitnessSystem lo confirma.
+        const hiddenLoc = WitnessSystem.getHiddenLocation(player, 10, 20);
+        if (WitnessSystem.isLookingAt(player, hiddenLoc)) return; // Failsafe
+
+        const dimension = player.dimension;
+        let foundTree = false;
+
+        for (let x = -5; x <= 5 && !foundTree; x++) {
+            for (let y = 0; y <= 10 && !foundTree; y++) {
+                for (let z = -5; z <= 5 && !foundTree; z++) {
+                    const blockLoc = { x: hiddenLoc.x + x, y: hiddenLoc.y + y, z: hiddenLoc.z + z };
+                    const block = dimension.getBlock(blockLoc);
+                    if (block && block.typeId.includes("leaves")) {
+                        dimension.runCommand(`setblock ${blockLoc.x} ${blockLoc.y} ${blockLoc.z} air`);
+                        foundTree = true;
+                        EvidenceSystem.fallingLeaves(player, blockLoc);
+                    }
+                }
+            }
+        }
+    }
+
+    static removeTorch(player, realityManager) {
+        if (!realityManager.isRealitySafe(player)) return;
+        
         const loc = player.location;
         const dimension = player.dimension;
         let found = false;
@@ -13,59 +40,50 @@ export class WorldManipulation {
                     const blockLoc = { x: Math.floor(loc.x + x), y: Math.floor(loc.y + y), z: Math.floor(loc.z + z) };
                     const block = dimension.getBlock(blockLoc);
                     if (block && (block.typeId === "minecraft:torch" || block.typeId === "minecraft:soul_torch")) {
-                        dimension.runCommand(`setblock ${blockLoc.x} ${blockLoc.y} ${blockLoc.z} air`);
+                        // Flashing effect before dying
+                        player.dimension.runCommand(`particle "minecraft:smoke_particle" ${blockLoc.x} ${blockLoc.y + 1} ${blockLoc.z}`);
                         player.playSound("random.fizz", { location: blockLoc, volume: 0.5 });
+                        dimension.runCommand(`setblock ${blockLoc.x} ${blockLoc.y} ${blockLoc.z} air`);
                         found = true;
-                        console.warn("[HerobrineAI] Antorcha eliminada en " + blockLoc.x + " " + blockLoc.y + " " + blockLoc.z);
                     }
                 }
             }
         }
     }
 
-    static buildPyramid(player) {
-        const viewDir = player.getViewDirection();
-        const loc = player.location;
-        const dimension = player.dimension;
+    static subtleSounds(player) {
+        const sounds = [
+            "step.grass",
+            "step.wood",
+            "random.bow",
+            "mob.creeper.say",
+            "mob.endermen.idle"
+        ];
+        const sound = sounds[Math.floor(Math.random() * sounds.length)];
+        const hiddenLoc = WitnessSystem.getHiddenLocation(player, 2, 4); // Just behind the player
         
-        // Colocar la pirámide a 15-25 bloques de distancia
-        const distance = 15 + Math.random() * 10;
-        const targetLoc = {
-            x: Math.floor(loc.x + (viewDir.x * distance)),
-            y: Math.floor(loc.y),
-            z: Math.floor(loc.z + (viewDir.z * distance))
-        };
-
-        const blockType = "minecraft:sand";
-        // Construir pirámide 3x3
-        dimension.runCommand(`fill ${targetLoc.x - 1} ${targetLoc.y} ${targetLoc.z - 1} ${targetLoc.x + 1} ${targetLoc.y} ${targetLoc.z + 1} ${blockType}`);
-        dimension.runCommand(`setblock ${targetLoc.x} ${targetLoc.y + 1} ${targetLoc.z} ${blockType}`);
-        
-        console.warn("[HerobrineAI] Pirámide construida en " + targetLoc.x + " " + targetLoc.y + " " + targetLoc.z);
+        player.playSound(sound, { location: hiddenLoc, volume: 1.0 });
+        EvidenceSystem.leaveFootprints(player, hiddenLoc);
     }
 
-    static createFakeEffect(player) {
-        const effects = ["ambient.cave", "step.stone", "mob.endermen.stare"];
-        const sound = effects[Math.floor(Math.random() * effects.length)];
-        player.playSound(sound, { location: player.location, volume: 1.0 });
-    }
+    static openDoors(player, realityManager) {
+        if (!realityManager.isRealitySafe(player)) return;
 
-    static openDoors(player) {
-        const loc = player.location;
+        const hiddenLoc = WitnessSystem.getHiddenLocation(player, 5, 15);
+        if (WitnessSystem.isLookingAt(player, hiddenLoc)) return;
+
         const dimension = player.dimension;
         let found = false;
 
         for (let x = -10; x <= 10 && !found; x++) {
             for (let y = -5; y <= 5 && !found; y++) {
                 for (let z = -10; z <= 10 && !found; z++) {
-                    const blockLoc = { x: Math.floor(loc.x + x), y: Math.floor(loc.y + y), z: Math.floor(loc.z + z) };
+                    const blockLoc = { x: hiddenLoc.x + x, y: hiddenLoc.y + y, z: hiddenLoc.z + z };
                     const block = dimension.getBlock(blockLoc);
                     if (block && block.typeId.includes("door")) {
                         try {
-                            // En Bedrock, las puertas tienen la propiedad "open_bit" o se pueden forzar con setblock/runCommand.
-                            // La forma más fácil de "abrir" una puerta o hacer sonido de puerta es con playSound y cambiar su bloque.
-                            // Pero usaremos la API de propiedades si es posible, o emitiremos sonido de abrir puerta.
-                            player.playSound("random.door_open", { location: blockLoc, volume: 1.0 });
+                            player.playSound("random.door_open", { location: blockLoc, volume: 0.8 });
+                            EvidenceSystem.leaveDirt(player, blockLoc);
                             found = true;
                         } catch(e) {}
                     }
@@ -74,17 +92,45 @@ export class WorldManipulation {
         }
     }
 
-    static weatherEvent(player) {
+    static buildPyramid(player, realityManager) {
+        if (!realityManager.isRealitySafe(player)) return;
+
+        const hiddenLoc = WitnessSystem.getHiddenLocation(player, 15, 30);
+        if (WitnessSystem.isLookingAt(player, hiddenLoc)) return;
+
+        const dimension = player.dimension;
+        const blockType = "minecraft:sand"; // Podría ser cristal, pero dejaremos arena
+        
+        // Verifica si la zona es segura
+        const centerBlock = dimension.getBlock(hiddenLoc);
+        if (centerBlock && realityManager.isBlockSafeToModify(centerBlock)) {
+            dimension.runCommand(`fill ${hiddenLoc.x - 1} ${hiddenLoc.y} ${hiddenLoc.z - 1} ${hiddenLoc.x + 1} ${hiddenLoc.y} ${hiddenLoc.z + 1} ${blockType}`);
+            dimension.runCommand(`setblock ${hiddenLoc.x} ${hiddenLoc.y + 1} ${hiddenLoc.z} ${blockType}`);
+        }
+    }
+
+    static digTunnel(player, realityManager) {
+        if (!realityManager.isRealitySafe(player)) return;
+        
+        const hiddenLoc = WitnessSystem.getHiddenLocation(player, 10, 20);
+        if (WitnessSystem.isLookingAt(player, hiddenLoc)) return;
+
+        // Simplificado: excava un túnel corto en una dirección aleatoria
+        const dimension = player.dimension;
+        const length = 5 + Math.floor(Math.random() * 10);
         try {
-            player.dimension.runCommand("weather thunder");
-            console.warn("[HerobrineAI] Invocando tormenta");
+            dimension.runCommand(`fill ${hiddenLoc.x} ${hiddenLoc.y} ${hiddenLoc.z} ${hiddenLoc.x + 1} ${hiddenLoc.y + 1} ${hiddenLoc.z + length} air replace stone`);
+            if (Math.random() > 0.5) {
+                dimension.runCommand(`setblock ${hiddenLoc.x} ${hiddenLoc.y} ${hiddenLoc.z + length} redstone_torch`);
+            }
         } catch(e) {}
     }
 
-    static blindnessEvent(player) {
+    static localFog(player) {
+        // Usa partículas para crear niebla, no ceguera
+        const hiddenLoc = WitnessSystem.getHiddenLocation(player, 5, 10);
         try {
-            player.dimension.runCommand(`effect "${player.name}" blindness 5 1 true`);
-            player.playSound("mob.wither.ambient", { location: player.location, volume: 1.0 });
+            player.dimension.runCommand(`particle "minecraft:campfire_smoke_particle" ${hiddenLoc.x} ${hiddenLoc.y + 1} ${hiddenLoc.z}`);
         } catch(e) {}
     }
 }

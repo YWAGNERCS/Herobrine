@@ -65,16 +65,16 @@ export class PlanExecutor {
         console.warn(`[PlanExecutor] Iniciando Sub Goal: ${subGoal.type}`);
         // Map abstract subgoal types to concrete States
         switch(subGoal.type) {
-            case "FindObservationPoint": return new States.IdleState(brain); // Invisible while finding
+            case "FindObservationPoint": return new States.IdleState(brain); 
             case "LookAtPlayer": return new States.WatchingState(brain);
             case "Disappear": return new States.LeavingState(brain);
-            case "SpawnSounds": return new States.ManipulateState(brain);
-            case "ApplyBlindness": return new States.ManipulateState(brain);
+            case "SpawnSounds": return new States.ManipulateState(brain, subGoal.type);
+            case "ApplyBlindness": return new States.ManipulateState(brain, subGoal.type);
             case "AggressiveStalk": return new States.ChasingState(brain);
-            case "ManipulateEnvironment": return new States.ManipulateState(brain);
+            case "ManipulateEnvironment": return new States.ManipulateState(brain, subGoal.type);
             case "DistantAppearance": return new States.WatchingState(brain);
-            case "SpawnSecuaces": return new States.ManipulateState(brain);
-            case "LightningStrike": return new States.ManipulateState(brain);
+            case "SpawnSecuaces": return new States.ManipulateState(brain, subGoal.type);
+            case "LightningStrike": return new States.ManipulateState(brain, subGoal.type);
             case "MeleeAttack": return new States.HuntingState(brain);
             case "WaitInvisible": return new States.IdleState(brain);
             default: return new States.IdleState(brain);
