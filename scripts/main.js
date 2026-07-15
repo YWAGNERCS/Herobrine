@@ -46,60 +46,44 @@ system.runInterval(() => {
 
 import { AttackAction } from "./actions/AttackAction.js";
 
-const chatEvent = 
-    (world.beforeEvents && world.beforeEvents.chatSend) ? world.beforeEvents.chatSend : 
-    (world.afterEvents && world.afterEvents.chatSend) ? world.afterEvents.chatSend : 
-    (world.events && world.events.beforeChat) ? world.events.beforeChat : 
-    (world.events && world.events.chat) ? world.events.chat : null;
+if (system.afterEvents && system.afterEvents.scriptEventReceive) {
+    system.afterEvents.scriptEventReceive.subscribe((event) => {
+        if (!globalBrain) return;
+        
+        // Obtener al jugador que envió el comando
+        const sourceEntity = event.sourceEntity;
+        if (!sourceEntity || sourceEntity.typeId !== "minecraft:player") return;
 
-if (chatEvent) {
-    chatEvent.subscribe((event) => {
-        const msg = event.message;
-        if (msg.startsWith("!hb")) {
-            if (event.cancel !== undefined) event.cancel = true; // Ocultar si es beforeEvent
-        const parts = msg.split(" ");
-        if (parts[1] === "set" && parts[2] && parts[3]) {
-            const stat = parts[2];
-            const val = parseInt(parts[3]);
+        if (event.id === "hb:set") {
+            const parts = event.message.split(" ");
+            const stat = parts[0];
+            const val = parseInt(parts[1]);
             
-            if (globalBrain) {
-                // Obtener memoria del jugador que envió el mensaje
-                const mem = globalBrain.getMemory(event.sender);
-                if (mem.player[stat] !== undefined) {
-                    mem.player[stat] = val;
-                    globalBrain.saveMemories();
-                    
-                    // Si cambiamos suspense a 0, forzamos al director a volver a fase CALM
-                    if (stat === "suspenseLevel" && val < 30) {
-                        globalBrain.terrorDirector.pacingPhase = "CALM";
-                    }
-                    
-                    event.sender.sendMessage(`§a[Debug AI] ${stat} actualizado a ${val}`);
-                } else {
-                    event.sender.sendMessage(`§c[Debug AI] Estadística '${stat}' no existe. Usa: suspenseLevel, fearLevel, safetyLevel, stressLevel, confidenceLevel`);
+            const mem = globalBrain.getMemory(sourceEntity);
+            if (mem.player[stat] !== undefined) {
+                mem.player[stat] = val;
+                globalBrain.saveMemories();
+                
+                if (stat === "suspenseLevel" && val < 30) {
+                    globalBrain.terrorDirector.pacingPhase = "CALM";
                 }
+                
+                sourceEntity.sendMessage(`§a[Debug AI] ${stat} actualizado a ${val}`);
             } else {
-                event.sender.sendMessage("§c[Debug AI] Cerebro no inicializado aún.");
+                sourceEntity.sendMessage(`§c[Debug AI] Estadística '${stat}' no existe. Usa: suspenseLevel, fearLevel, safetyLevel, stressLevel, confidenceLevel`);
             }
-        } else if (parts[1] === "info") {
-            if (globalBrain) {
-                const mem = globalBrain.getMemory(event.sender);
-                const stats = mem.player;
-                event.sender.sendMessage(`§b--- Herobrine AI Stats ---`);
-                event.sender.sendMessage(`§7Suspense: §f${stats.suspenseLevel}`);
-                event.sender.sendMessage(`§7Safety: §f${stats.safetyLevel}`);
-                event.sender.sendMessage(`§7Confidence: §f${stats.confidenceLevel}`);
-                event.sender.sendMessage(`§7Fear: §f${stats.fearLevel}`);
-                event.sender.sendMessage(`§7Stress: §f${stats.stressLevel}`);
-                event.sender.sendMessage(`§7Fase Director: §e${globalBrain.terrorDirector.pacingPhase}`);
-            }
-        } else {
-            event.sender.sendMessage("§e[Debug AI] Comandos: '!hb info' o '!hb set <estat> <valor>'");
-        }
+        } else if (event.id === "hb:info") {
+            const mem = globalBrain.getMemory(sourceEntity);
+            const stats = mem.player;
+            sourceEntity.sendMessage(`§b--- Herobrine AI Stats ---`);
+            sourceEntity.sendMessage(`§7Suspense: §f${stats.suspenseLevel}`);
+            sourceEntity.sendMessage(`§7Safety: §f${stats.safetyLevel}`);
+            sourceEntity.sendMessage(`§7Confidence: §f${stats.confidenceLevel}`);
+            sourceEntity.sendMessage(`§7Fear: §f${stats.fearLevel}`);
+            sourceEntity.sendMessage(`§7Stress: §f${stats.stressLevel}`);
+            sourceEntity.sendMessage(`§7Fase Director: §e${globalBrain.terrorDirector.pacingPhase}`);
         }
     });
-} else {
-    world.sendMessage("§e[Debug AI] Advertencia: Esta versión de Minecraft no soporta eventos de chat por script. El comando !hb no funcionará.");
 }
 
 // Código de debug con el palo removido. El mod ahora es 100% autónomo.
