@@ -4,6 +4,7 @@ import { PlanExecutor } from "./PlanExecutor.js";
 import { TerrorDirector } from "./TerrorDirector.js";
 import { GoalPlanner } from "./GoalPlanner.js";
 import { InterruptManager } from "./InterruptManager.js";
+import { RealityManager } from "./RealityManager.js";
 import * as States from "../states/index.js";
 
 export class HerobrineBrain {
@@ -17,6 +18,7 @@ export class HerobrineBrain {
         this.terrorDirector = new TerrorDirector(systems.worldSystem);
         this.goalPlanner = new GoalPlanner(systems.worldSystem);
         this.interruptManager = new InterruptManager(systems.worldSystem);
+        this.realityManager = new RealityManager(systems.worldSystem);
         
         this.planExecutor = new PlanExecutor(
             systems.worldSystem, 
