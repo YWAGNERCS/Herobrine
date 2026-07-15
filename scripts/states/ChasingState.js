@@ -1,10 +1,9 @@
-import { State } from "./State.js";
 import { EscapeAction } from "../actions/EscapeAction.js";
 import { IdleState } from "./IdleState.js";
 
-export class ChasingState extends State {
+export class ChasingState {
     constructor(brain) {
-        super(brain);
+        this.brain = brain;
         this.ticks = 0;
         this.duration = 20 * 15; // Persigue lentamente por 15 segundos máximo
     }
