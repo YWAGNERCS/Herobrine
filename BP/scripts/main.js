@@ -46,10 +46,13 @@ system.runInterval(() => {
 
 import { AttackAction } from "./actions/AttackAction.js";
 
-world.beforeEvents.chatSend.subscribe((event) => {
-    const msg = event.message;
-    if (msg.startsWith("!hb")) {
-        event.cancel = true; // Ocultar del chat público
+const chatEvent = (world.beforeEvents && world.beforeEvents.chatSend) ? world.beforeEvents.chatSend : (world.afterEvents && world.afterEvents.chatSend ? world.afterEvents.chatSend : null);
+
+if (chatEvent) {
+    chatEvent.subscribe((event) => {
+        const msg = event.message;
+        if (msg.startsWith("!hb")) {
+            if (event.cancel !== undefined) event.cancel = true; // Ocultar si es beforeEvent
         const parts = msg.split(" ");
         if (parts[1] === "set" && parts[2] && parts[3]) {
             const stat = parts[2];
@@ -89,7 +92,8 @@ world.beforeEvents.chatSend.subscribe((event) => {
         } else {
             event.sender.sendMessage("§e[Debug AI] Comandos: '!hb info' o '!hb set <estat> <valor>'");
         }
-    }
-});
+        }
+    });
+}
 
 // Código de debug con el palo removido. El mod ahora es 100% autónomo.
