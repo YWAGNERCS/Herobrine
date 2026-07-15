@@ -46,26 +46,4 @@ system.runInterval(() => {
 
 import { AttackAction } from "./actions/AttackAction.js";
 
-let lastStickUse = 0;
-try {
-    world.afterEvents.itemUse.subscribe((event) => {
-        if (event.itemStack.typeId === "minecraft:stick") {
-            const now = Date.now();
-            if (now - lastStickUse < 2000) return; // 2 segundos de cooldown
-            lastStickUse = now;
-            
-            world.sendMessage("§a[Debug] Forzando AttackAction directo...");
-            try {
-                if (globalBrain) {
-                    AttackAction.execute(globalBrain, event.source);
-                } else {
-                    world.sendMessage("§c[Debug] globalBrain es NULL! Error de inicio: " + String(errorMsg_backup));
-                }
-            } catch (e) {
-                world.sendMessage("Error spawn: " + String(e) + " " + String(e.stack));
-            }
-        }
-    });
-} catch(e) {
-    world.sendMessage("§cError registrando item: " + String(e));
-}
+// Código de debug con el palo removido. El mod ahora es 100% autónomo.
