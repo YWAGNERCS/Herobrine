@@ -46,7 +46,11 @@ system.runInterval(() => {
 
 import { AttackAction } from "./actions/AttackAction.js";
 
-const chatEvent = (world.beforeEvents && world.beforeEvents.chatSend) ? world.beforeEvents.chatSend : (world.afterEvents && world.afterEvents.chatSend ? world.afterEvents.chatSend : null);
+const chatEvent = 
+    (world.beforeEvents && world.beforeEvents.chatSend) ? world.beforeEvents.chatSend : 
+    (world.afterEvents && world.afterEvents.chatSend) ? world.afterEvents.chatSend : 
+    (world.events && world.events.beforeChat) ? world.events.beforeChat : 
+    (world.events && world.events.chat) ? world.events.chat : null;
 
 if (chatEvent) {
     chatEvent.subscribe((event) => {
@@ -94,6 +98,8 @@ if (chatEvent) {
         }
         }
     });
+} else {
+    world.sendMessage("§e[Debug AI] Advertencia: Esta versión de Minecraft no soporta eventos de chat por script. El comando !hb no funcionará.");
 }
 
 // Código de debug con el palo removido. El mod ahora es 100% autónomo.
