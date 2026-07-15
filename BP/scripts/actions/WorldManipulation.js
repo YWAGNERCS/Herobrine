@@ -1,5 +1,5 @@
-import { WitnessSystem } from "./WitnessSystem.js";
-import { EvidenceSystem } from "./EvidenceSystem.js";
+import { WitnessSystem } from "../brain/WitnessSystem.js";
+import { EvidenceSystem } from "../brain/EvidenceSystem.js";
 
 export class WorldManipulation {
     static stripLeaves(player, realityManager) {
