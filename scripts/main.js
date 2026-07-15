@@ -73,6 +73,7 @@ if (system.afterEvents && system.afterEvents.scriptEventReceive) {
                 globalBrain.terrorDirector.lastEventTick = 0;
                 globalBrain.terrorDirector.phaseTicks = 100000;
                 mem.behavior.goalHistory = {}; // Limpiar todos los cooldowns de los eventos
+                globalBrain.planExecutor.activeMetaGoal = null; // Abortar plan actual (ej. DoNothing) para que evalúe de inmediato
                 
                 sourceEntity.sendMessage(`§a[Debug AI] ${stat} actualizado a ${val}`);
             } else {
