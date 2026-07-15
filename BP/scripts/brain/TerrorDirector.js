@@ -11,6 +11,11 @@ export class TerrorDirector {
     }
 
     updateMetrics(player, memory) {
+        if (memory.player.debugLock > 0) {
+            memory.player.debugLock--;
+            return; // No sobreescribir métricas si se están debugeando
+        }
+        
         let safety = 50;
         const isDay = this.worldSystem.isNight() ? false : true;
         const health = player.getComponent("health");

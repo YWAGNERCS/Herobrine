@@ -62,11 +62,17 @@ if (system.afterEvents && system.afterEvents.scriptEventReceive) {
             const mem = globalBrain.getMemory(sourceEntity);
             if (mem.player[stat] !== undefined) {
                 mem.player[stat] = val;
+                mem.player.debugLock = 1200; // 1 minuto de bloqueo para que updateMetrics no lo sobreescriba
                 globalBrain.saveMemories();
                 
                 if (stat === "suspenseLevel" && val < 30) {
                     globalBrain.terrorDirector.pacingPhase = "CALM";
                 }
+                
+                // Forzar que el director ignore los enfriamientos al debugear
+                globalBrain.terrorDirector.lastEventTick = 0;
+                globalBrain.terrorDirector.phaseTicks = 100000;
+                mem.behavior.goalHistory = {}; // Limpiar todos los cooldowns de los eventos
                 
                 sourceEntity.sendMessage(`§a[Debug AI] ${stat} actualizado a ${val}`);
             } else {

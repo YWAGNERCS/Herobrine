@@ -8,8 +8,9 @@ export class Memory {
             timesSeen: 0,
             interestLevel: 0,
             fearLevel: 0,
-            safetyLevel: 50,
+            safetyLevel: 100,
             confidenceLevel: 50,
+            debugLock: 0,
             stressLevel: 0,
             suspenseLevel: 0
         };
