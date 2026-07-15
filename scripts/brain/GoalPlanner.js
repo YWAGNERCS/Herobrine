@@ -14,8 +14,8 @@ export class GoalPlanner {
             if (goalData.cost > tensionBudget) continue;
             
             // Check cooldown
-            const lastUsed = memory.behavior.goalHistory[goalName] || 0;
-            if (currentTick - lastUsed < goalData.cooldownTicks) continue;
+            const lastUsed = memory.behavior.goalHistory[goalName];
+            if (lastUsed !== undefined && currentTick - lastUsed < goalData.cooldownTicks) continue;
             
             // Check contextual requirements
             if (goalData.checkRequirements(memory, player, this.worldSystem)) {
