@@ -15,7 +15,10 @@ export class PlanExecutor {
 
     executePlan(memory, personality, brain) {
         const targetPlayer = brain.targetPlayer;
-        if (!targetPlayer) return new States.IdleState(brain);
+        if (!targetPlayer) {
+            if (brain.currentState && brain.currentState.constructor.name === "IdleState") return null;
+            return new States.IdleState(brain);
+        }
 
         // Check Interrupts
         if (this.interruptManager.checkInterrupts(targetPlayer, this.activeMetaGoal)) {
@@ -58,6 +61,9 @@ export class PlanExecutor {
             return this.mapSubGoalToState(this.activeMetaGoal.subGoals[this.currentSubGoalIndex], brain);
         }
 
+        if (brain.currentState && brain.currentState.constructor.name === "IdleState") {
+            return null;
+        }
         return new States.IdleState(brain);
     }
 
