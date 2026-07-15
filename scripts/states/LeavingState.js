@@ -4,7 +4,6 @@ import { EscapeAction } from "../actions/EscapeAction.js";
 export class LeavingState {
     constructor(brain) { this.brain = brain; }
     enter() { 
-        console.warn("[HerobrineAI] -> LeavingState"); 
         this.brain.setVisualState("teleport_fade");
         
         // Stop vanilla AI behaviors (attacking, moving)

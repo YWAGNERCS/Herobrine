@@ -1,7 +1,7 @@
 export class IdleState {
     constructor(brain) { this.brain = brain; }
     enter() {
-        console.warn("[HerobrineAI] -> IdleState");
+        // Silencio en IdleState para no llenar la consola
     }
     execute() {
         // En Idle, simplemente incrementamos poco a poco el fearLevel (interés pasivo)

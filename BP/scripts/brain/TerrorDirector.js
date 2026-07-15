@@ -59,23 +59,37 @@ export class TerrorDirector {
                 return 0;
 
             case "BUILD_UP":
+                if (this.phaseTicks - (this.lastEventTick || 0) < 20 * 60) {
+                    return 0; // Al menos 1 minuto de respiro entre intentos en BUILD_UP
+                }
+
                 if (memory.player.safetyLevel > 70 && memory.player.confidenceLevel > 60) {
-                    if (Math.random() < 0.3) {
-                        this.pacingPhase = "PEAK";
-                        this.phaseTicks = 0;
-                        return 4; // Chase (Nivel 4)
+                    if (Math.random() < 0.01) { // 1% chance por tick (aprox cada 5 segs de chequeo, pero está limitado por el minuto anterior)
+                        this.lastEventTick = this.phaseTicks;
+                        if (Math.random() < 0.3) {
+                            this.pacingPhase = "PEAK";
+                            this.phaseTicks = 0;
+                            return 4; // Chase (Nivel 4)
+                        }
+                        return 3; // Signs (Nivel 3)
                     }
-                    return 3; // Signs (Nivel 3)
                 }
 
                 if (memory.player.suspenseLevel > 80) {
+                    this.lastEventTick = this.phaseTicks;
                     this.pacingPhase = "PEAK";
                     this.phaseTicks = 0;
                     return 5; // Combat (Nivel 5)
                 }
                 
-                if (Math.random() < 0.05) return 2; // Sounds
-                if (Math.random() < 0.02) return 1; // Observation
+                if (Math.random() < 0.001) {
+                    this.lastEventTick = this.phaseTicks;
+                    return 2; // Sounds
+                }
+                if (Math.random() < 0.005) {
+                    this.lastEventTick = this.phaseTicks;
+                    return 1; // Observation
+                }
                 
                 return 0;
 

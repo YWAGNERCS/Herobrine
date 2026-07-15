@@ -45,7 +45,9 @@ export class GoalPlanner {
         // Update history
         memory.behavior.goalHistory[selectedGoal.name] = currentTick;
         
-        console.warn(`[GoalPlanner] Meta Goal seleccionado: ${selectedGoal.name} (Coste: ${selectedGoal.data.cost})`);
+        if (selectedGoal.name !== "DoNothing") {
+            console.warn(`[GoalPlanner] Meta Goal seleccionado: ${selectedGoal.name} (Coste: ${selectedGoal.data.cost})`);
+        }
         
         return {
             name: selectedGoal.name,

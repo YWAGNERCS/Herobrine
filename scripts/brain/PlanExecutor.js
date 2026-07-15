@@ -38,7 +38,9 @@ export class PlanExecutor {
                 this.subGoalTicks = 0;
                 
                 if (this.currentSubGoalIndex >= this.activeMetaGoal.subGoals.length) {
-                    console.warn(`[PlanExecutor] Meta Goal completado: ${this.activeMetaGoal.name}`);
+                    if (this.activeMetaGoal.name !== "DoNothing") {
+                        console.warn(`[PlanExecutor] Meta Goal completado: ${this.activeMetaGoal.name}`);
+                    }
                     this.activeMetaGoal = null; // Finished plan
                     return new States.LeavingState(brain); // Final exit
                 } else {
@@ -68,7 +70,9 @@ export class PlanExecutor {
     }
 
     mapSubGoalToState(subGoal, brain) {
-        console.warn(`[PlanExecutor] Iniciando Sub Goal: ${subGoal.type}`);
+        if (subGoal.type !== "WaitInvisible" && subGoal.type !== "Disappear") {
+            console.warn(`[PlanExecutor] Iniciando Sub Goal: ${subGoal.type}`);
+        }
         // Map abstract subgoal types to concrete States
         switch(subGoal.type) {
             case "FindObservationPoint": return new States.IdleState(brain); 
