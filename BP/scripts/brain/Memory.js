@@ -35,7 +35,9 @@ export class Memory {
             lastState: 'IdleState',
             daysWithoutAppearing: 0,
             timesFollowed: 0,
-            timesEscaped: 0
+            timesEscaped: 0,
+            goalHistory: {}, // { metaGoalName: lastUsedTick }
+            longTermDirective: null // { type: 'PACIFIST', expirationTick: 0 }
         };
     }
 }

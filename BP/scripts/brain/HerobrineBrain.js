@@ -1,7 +1,9 @@
 import { MemoryManager } from "./MemoryManager.js";
 import { Personality } from "./Personality.js";
-import { DecisionEngine } from "./DecisionEngine.js";
+import { PlanExecutor } from "./PlanExecutor.js";
 import { TerrorDirector } from "./TerrorDirector.js";
+import { GoalPlanner } from "./GoalPlanner.js";
+import { InterruptManager } from "./InterruptManager.js";
 import * as States from "../states/index.js";
 
 export class HerobrineBrain {
@@ -13,7 +15,16 @@ export class HerobrineBrain {
 
         this.personality = new Personality();
         this.terrorDirector = new TerrorDirector(systems.worldSystem);
-        this.decisionEngine = new DecisionEngine(systems.worldSystem, systems.playerTracker, this.terrorDirector);
+        this.goalPlanner = new GoalPlanner(systems.worldSystem);
+        this.interruptManager = new InterruptManager(systems.worldSystem);
+        
+        this.planExecutor = new PlanExecutor(
+            systems.worldSystem, 
+            systems.playerTracker, 
+            this.terrorDirector, 
+            this.goalPlanner, 
+            this.interruptManager
+        );
         
         this.targetPlayer = null;
         this.currentState = new States.IdleState(this);
@@ -65,17 +76,15 @@ export class HerobrineBrain {
     }
 
     forceEscape(attacker = null) {
-        if (this.currentState.constructor.name === "LeavingState") return; // Ya está huyendo
+        if (this.currentState.constructor.name === "LeavingState") return; 
         
         const playerToScare = attacker || this.targetPlayer;
         if (playerToScare) {
             this.systems.eventSystem.addFear(playerToScare, 20, "Atacó a Herobrine");
         }
         
-        // Limpiar objetivo actual del motor de decisiones
-        this.decisionEngine.currentGoal = null;
+        this.planExecutor.activeMetaGoal = null;
         
-        // Cambiar a LeavingState
         this.changeState(new States.LeavingState(this));
     }
 
@@ -88,7 +97,6 @@ export class HerobrineBrain {
 
         const memory = this.getMemory(this.targetPlayer);
 
-        // Fear decay: -1 fear every ~60 seconds (1200 ticks, we tick every 20 ticks so roughly 60 calls)
         if (!this.tickCount) this.tickCount = 0;
         this.tickCount++;
         if (this.tickCount % 60 === 0) {
@@ -98,7 +106,7 @@ export class HerobrineBrain {
             }
         }
 
-        const nextState = this.decisionEngine.evaluate(memory, this.personality, this);
+        const nextState = this.planExecutor.executePlan(memory, this.personality, this);
         if (nextState) {
             this.changeState(nextState);
         }
